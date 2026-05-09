@@ -5,6 +5,7 @@ import 'screens/usage_screen.dart';
 import 'screens/achieve_screen.dart';
 import 'screens/report_screen.dart';
 import 'screens/goals_screen.dart';
+import 'screens/login_screen.dart';
 
 void main() {
   runApp(const SkillTimeApp());
@@ -19,33 +20,44 @@ class SkillTimeApp extends StatelessWidget {
       title: 'SkillTime',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
-      home: const MainNavigation(),
+      home: const LoginScreen(),
     );
   }
 }
 
 class MainNavigation extends StatefulWidget {
-  const MainNavigation({super.key});
+  final int initialIndex;
+  const MainNavigation({super.key, this.initialIndex = 0});
 
   @override
-  State<MainNavigation> createState() => _MainNavigationState();
+  State<MainNavigation> createState() => MainNavigationState();
 }
 
-class _MainNavigationState extends State<MainNavigation> {
-  int _currentIndex = 0;
+class MainNavigationState extends State<MainNavigation> {
+  late int _currentIndex;
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    UsageScreen(),
-    AchieveScreen(),
-    ReportScreen(),
-    GoalsScreen(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+  }
+
+  void switchTab(int index) {
+    setState(() => _currentIndex = index);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> screens = [
+      HomeScreen(onNavigateToUsage: () => switchTab(1)),
+      const UsageScreen(),
+      const AchieveScreen(),
+      const ReportScreen(),
+      const GoalsScreen(),
+    ];
+
     return Scaffold(
-      body: _screens[_currentIndex],
+      body: screens[_currentIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: AppColors.navBarBg,
